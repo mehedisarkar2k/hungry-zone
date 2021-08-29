@@ -1,3 +1,49 @@
+// functions
+const fetchData = (link, callback) => {
+  fetch(link)
+    .then((response) => response.json())
+    .then((data) => callback(data));
+};
+
+const seeFoodDetails = (idMeal) => {
+  const foodDetailsContainer = document.getElementById("food-details");
+  const foodDetailsTitle = document.getElementById("food-details-title");
+  const link = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idMeal}`;
+
+  fetchData(link, (data) => {
+    const item = data.meals[0];
+
+    foodDetailsContainer.querySelector(".modal-body").innerHTML = `
+    <div class="card">
+      <img style="object-fit: cover; height: 250px;"  src="${
+        item.strMealThumb
+      }" class="card-img-top" alt="${item.strMeal}">
+      <div class="card-body">
+        <p class="card-text">${item.strInstructions.slice(0, 450)}</p>
+      </div>
+    </div>`;
+
+    foodDetailsContainer.querySelector(".modal-footer").innerHTML = `
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        Close
+      </button>
+      <button class="btn btn-outline-primary">
+        Add to cart
+      </button>
+    
+    `;
+
+    foodDetailsTitle.innerText = item.strMeal;
+  });
+};
+
+const showError = (message, container) => {
+  container.style.display = "block";
+  container.className = "bg-warning p-2 w-50 mx-auto";
+  container.querySelector("p").innerHTML = message;
+  container.querySelector("p").classList.add("text-danger");
+};
+
 const createFoodItem = (data) => {
   return `
 <div class="col">
@@ -5,13 +51,13 @@ const createFoodItem = (data) => {
         <img src="${data.imgSrc}" class="card-img-top" alt="${data.imgAlt}" />
         <div class="card-body">
             <h5 class="card-title">${data.itemName}</h5>
-            <p class="card-text">
-                ${data.itemDetails}
-            </p>
         </div>
         <div class="card-footer">
             <div class="d-flex justify-content-between">
-                <div class="btn btn-outline-primary">See details</div>
+                <div  type="button"
+                class="btn btn-outline-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">See details</div>
                 <div class="btn btn-outline-primary">Add to cart</div>
             </div>
         </div>
@@ -20,25 +66,26 @@ const createFoodItem = (data) => {
 `;
 };
 
-const fetchData = (link, callback) => {
-  fetch(link)
-    .then((response) => response.json())
-    .then((data) => callback(data));
-};
-
+// search search handler
 document.getElementById("search-btn").addEventListener("click", () => {
   const mealContainer = document.getElementById("meal-container");
   const searchData = document.getElementById("search-field").value;
   const messageContainer = document.getElementById("message-container");
   const spinnerContainer = document.getElementById("spinner-container");
+  let link = "";
 
   messageContainer.style.display = "none";
 
-  const link = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchData}`;
   mealContainer.innerHTML = "";
 
   if (searchData) {
     spinnerContainer.style.display = "block";
+
+    if (searchData.length > 1) {
+      link = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchData}`;
+    } else {
+      link = `https://www.themealdb.com/api/json/v1/1/search.php?f=${searchData}`;
+    }
 
     fetchData(link, (data) => {
       const allItems = data.meals;
@@ -52,7 +99,8 @@ document.getElementById("search-btn").addEventListener("click", () => {
             imgSrc: item.strMealThumb,
             imgAlt: item.strMeal,
             itemName: item.strMeal,
-            itemDetails: item.strInstructions.slice(0, 250),
+            itemDetails: item.strInstructions.slice(0, 200),
+            idMeal: item.idMeal,
           };
 
           mealContainer.innerHTML += createFoodItem(eachItem);
@@ -68,10 +116,3 @@ document.getElementById("search-btn").addEventListener("click", () => {
     showError("You can't search by empty value!!!", messageContainer);
   }
 });
-
-const showError = (message, container) => {
-  container.style.display = "block";
-  container.className = "bg-warning p-2 w-50 mx-auto";
-  container.querySelector("p").innerHTML = message;
-  container.querySelector("p").classList.add("text-danger");
-};

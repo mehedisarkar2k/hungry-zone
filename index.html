@@ -19,7 +19,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
-        <a class="fs-4 text-primary navbar-brand" href="#">
+        <a class="fs-4 text-primary navbar-brand" href="./index.html">
           <i class="bi bi-shop"></i>
           Hungry zone
         </a>
@@ -56,7 +56,7 @@
               style="cursor: pointer"
               class="nav-item"
               data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
+              data-bs-target="#cart-items"
             >
               <p class="text-primary nav-link">
                 <i class="block bi bi-cart-plus"></i>
@@ -119,11 +119,8 @@
     </div>
 
     <!-- message -->
-    <div class="container bg-gradient mt-4">
-      <div
-        id="message-container"
-        class="text-white bg-primary p-2 w-50 mx-auto"
-      >
+    <div class="container mt-4">
+      <div id="message-container" class="text-primary p-2 w-50 mx-auto">
         <p class="fs-4 text-center">
           Welcome to hungry zone. Search by your desire food name.
         </p>
@@ -131,19 +128,21 @@
     </div>
 
     <!-- modals -->
+
+    <!-- for cart -->
     <div
       class="modal fade"
-      id="staticBackdrop"
+      id="cart-items"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
-      aria-labelledby="staticBackdropLabel"
+      aria-labelledby="cart-details"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Your Order</h5>
+            <h5 class="modal-title" id="cart-details">Your Order</h5>
             <button
               type="button"
               class="btn-close"
@@ -151,42 +150,28 @@
               aria-label="Close"
             ></button>
           </div>
+
           <div class="modal-body">
-            <div class="container bg-light">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                </tbody>
-
-                <tfoot>
-                  <tr>
-                    <td colspan="2">Your Total:</td>
-                    <td>500$</td>
-                  </tr>
-                </tfoot>
-              </table>
+            <div class="card py-2 px-4 mb-3" style="max-width: 540px">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img
+                    src="https://www.themealdb.com/images/media/meals/vwwspt1487394060.jpg"
+                    class="img-fluid rounded-circle"
+                    alt="..."
+                  />
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body ms-4">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">
+                      <small class="text-primary fw-bolder fs-5"
+                        >Quantity: 2</small
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -202,6 +187,51 @@
         </div>
       </div>
     </div>
+
+    <!-- for food details -->
+    <div
+      class="modal fade"
+      id="food-details"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="food-details"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="food-details-title">Modal title</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary">Understood</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#food-details"
+    >
+      Launch static backdrop modal
+    </button> -->
 
     <!-- bootstrap script cdn -->
     <script
