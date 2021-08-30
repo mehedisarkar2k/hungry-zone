@@ -73,7 +73,7 @@ const cardFooter = (data, type) => {
 };
 
 const seeFoodCatagories = (strCategory) => {
-  mealContainergit.innerHTML = "";
+  mealContainer.innerHTML = "";
   const link = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${strCategory}`;
 
   spinnerContainer.style.display = "block";
