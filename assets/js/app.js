@@ -1,3 +1,8 @@
+// global variables
+const mealContainer = document.getElementById("meal-container");
+const spinnerContainer = document.getElementById("spinner-container");
+const messageContainer = document.getElementById("message-container");
+
 // functions
 const fetchData = (link, callback) => {
   fetch(link)
@@ -46,7 +51,61 @@ const showError = (message, container) => {
   container.querySelector("p").classList.add("text-danger");
 };
 
-const createFoodItem = (data) => {
+const cardFooter = (data, type) => {
+  if (type == "meal" || type == "category") {
+    return `
+  <div class="d-flex justify-content-between">
+    <button  type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">
+      See details
+    </button>
+    <div class="btn btn-outline-success">Add to cart</div>
+  </div>
+  `;
+  } else {
+    return `
+  <div class="d-flex justify-content-center">
+    <button  type="button" class="btn btn-outline-success" onclick="seeFoodCatagories('${data.strCategory}')">
+      See Catagories
+    </button>
+  </div>
+  `;
+  }
+};
+
+const seeFoodCatagories = (strCategory) => {
+  mealContainergit.innerHTML = "";
+  const link = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${strCategory}`;
+
+  spinnerContainer.style.display = "block";
+
+  fetchData(link, (data) => {
+    const allItems = data.meals;
+    spinnerContainer.style.display = "none";
+    makeCard(mealContainer, allItems, "category");
+  });
+};
+
+const makeCard = (target, data, type) => {
+  let eachItem = {};
+
+  data.forEach((item) => {
+    if (type == "meal" || type == "category") {
+      eachItem.imgSrc = item.strMealThumb;
+      eachItem.imgAlt = item.strMeal;
+      eachItem.itemName = item.strMeal;
+      eachItem.idMeal = item.idMeal;
+    } else {
+      eachItem.imgSrc = item.strCategoryThumb;
+      eachItem.imgAlt = item.strCategory;
+      eachItem.itemName = item.strCategory;
+      eachItem.strCategory = item.strCategory;
+    }
+
+    target.innerHTML += createFoodItem(eachItem, type);
+  });
+};
+
+const createFoodItem = (data, type) => {
   return `
 <div class="col">
     <div class="card h-100">
@@ -55,13 +114,7 @@ const createFoodItem = (data) => {
             <h5 class="card-title text-success fw-bold">${data.itemName}</h5>
         </div>
         <div class="card-footer">
-            <div class="d-flex justify-content-between">
-                <div  type="button"
-                class="btn btn-outline-success"
-                data-bs-toggle="modal"
-                data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">See details</div>
-                <div class="btn btn-outline-success">Add to cart</div>
-            </div>
+            ${cardFooter(data, type)}
         </div>
     </div>
 </div>
@@ -72,7 +125,6 @@ const createFoodItem = (data) => {
 document.getElementById("search-btn").addEventListener("click", () => {
   const mealContainer = document.getElementById("meal-container");
   const searchData = document.getElementById("search-field").value;
-  const messageContainer = document.getElementById("message-container");
   const spinnerContainer = document.getElementById("spinner-container");
   let link = "";
 
@@ -96,17 +148,7 @@ document.getElementById("search-btn").addEventListener("click", () => {
       if (allItems != null) {
         messageContainer.style.display = "none";
 
-        allItems.forEach((item) => {
-          const eachItem = {
-            imgSrc: item.strMealThumb,
-            imgAlt: item.strMeal,
-            itemName: item.strMeal,
-            itemDetails: item.strInstructions.slice(0, 200),
-            idMeal: item.idMeal,
-          };
-
-          mealContainer.innerHTML += createFoodItem(eachItem);
-        });
+        makeCard(mealContainer, allItems, "meal");
       } else {
         showError(
           `You search for <span class="fw-bolder fst-italic">${searchData}</span>. No items found.`,
@@ -118,3 +160,24 @@ document.getElementById("search-btn").addEventListener("click", () => {
     showError("You can't search by empty value!!!", messageContainer);
   }
 });
+
+// initial food items by category
+
+(() => {
+  const link = `https://www.themealdb.com/api/json/v1/1/categories.php`;
+  spinnerContainer.style.display = "block";
+
+  fetchData(link, (data) => {
+    const allItems = data.categories;
+
+    spinnerContainer.style.display = "none";
+
+    if (allItems != null) {
+      messageContainer.style.display = "none";
+
+      makeCard(mealContainer, allItems, "allCategory");
+    } else {
+      showError(`Something went wrong...!`, messageContainer);
+    }
+  });
+})();
