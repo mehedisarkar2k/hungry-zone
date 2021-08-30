@@ -10,9 +10,13 @@ const seeFoodDetails = (idMeal) => {
   const foodDetailsTitle = document.getElementById("food-details-title");
   const link = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${idMeal}`;
 
+  foodDetailsContainer.querySelector(".modal-body").innerHTML = "";
+  foodDetailsTitle.innerText = "Loading...";
+
   fetchData(link, (data) => {
     const item = data.meals[0];
 
+    foodDetailsTitle.innerText = item.strMeal;
     foodDetailsContainer.querySelector(".modal-body").innerHTML = `
     <div class="card">
       <img style="object-fit: cover; height: 250px;"  src="${
@@ -24,16 +28,14 @@ const seeFoodDetails = (idMeal) => {
     </div>`;
 
     foodDetailsContainer.querySelector(".modal-footer").innerHTML = `
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
         Close
       </button>
-      <button class="btn btn-outline-primary">
+      <button class="btn btn-outline-success">
         Add to cart
       </button>
     
     `;
-
-    foodDetailsTitle.innerText = item.strMeal;
   });
 };
 
@@ -50,15 +52,15 @@ const createFoodItem = (data) => {
     <div class="card h-100">
         <img src="${data.imgSrc}" class="card-img-top" alt="${data.imgAlt}" />
         <div class="card-body">
-            <h5 class="card-title">${data.itemName}</h5>
+            <h5 class="card-title text-success fw-bold">${data.itemName}</h5>
         </div>
         <div class="card-footer">
             <div class="d-flex justify-content-between">
                 <div  type="button"
-                class="btn btn-outline-primary"
+                class="btn btn-outline-success"
                 data-bs-toggle="modal"
                 data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">See details</div>
-                <div class="btn btn-outline-primary">Add to cart</div>
+                <div class="btn btn-outline-success">Add to cart</div>
             </div>
         </div>
     </div>
