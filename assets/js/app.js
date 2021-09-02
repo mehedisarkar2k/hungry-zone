@@ -10,6 +10,61 @@ const fetchData = (link, callback) => {
     .then((data) => callback(data));
 };
 
+const addToCart = (foodID) => {
+  const link = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${foodID}`;
+
+  fetchData(link, (data) => {
+    document.getElementById("cart-add-info").style.display = "block";
+
+    const { strMealThumb, strMeal } = data.meals[0];
+    const cart = document.getElementById("cart-items");
+    let isFound = false;
+
+    for (let item of cart.querySelectorAll(".cart-item")) {
+      const itemId = parseInt(item.querySelector(".meal-id").innerText);
+
+      if (itemId === foodID) {
+        let quantity = parseInt(item.querySelector(".meal-quantity").innerText);
+        item.querySelector(".meal-quantity").innerText = quantity + 1;
+        isFound = true;
+      }
+    }
+
+    if (!isFound) {
+      const modalBody = cart.querySelector(".modal-body");
+
+      modalBody.innerHTML += `
+      <div class="cart-item card py-2 px-4 mb-3" style="max-width: 540px">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img
+                    src="${strMealThumb}"
+                    class="img-fluid rounded-circle"
+                    alt="${strMeal}"
+                  />
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body ms-4">
+                    <h5 class="meal-title card-title">${strMeal}</h5>
+                    <h5 class="meal-id visually-hidden">${foodID}</h5>
+                    <p class="card-text">
+                      <small class="text-success fw-bolder fs-5"
+                        >Quantity: <span class="meal-quantity">1</span></small
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+      `;
+    }
+  });
+
+  setTimeout(() => {
+    document.getElementById("cart-add-info").style.display = "none";
+  }, 1000);
+};
+
 const seeFoodDetails = (idMeal) => {
   const foodDetailsContainer = document.getElementById("food-details");
   const foodDetailsTitle = document.getElementById("food-details-title");
@@ -36,7 +91,7 @@ const seeFoodDetails = (idMeal) => {
       <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">
         Close
       </button>
-      <button class="btn btn-outline-success">
+      <button onclick="addToCart(${idMeal})" class="btn btn-outline-success">
         Add to cart
       </button>
     
@@ -58,7 +113,7 @@ const cardFooter = (data, type) => {
     <button  type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">
       See details
     </button>
-    <div class="btn btn-outline-success">Add to cart</div>
+    <div onclick="addToCart(${data.idMeal})" class="btn btn-outline-success">Add to cart</div>
   </div>
   `;
   } else {
@@ -162,6 +217,8 @@ document.getElementById("search-btn").addEventListener("click", () => {
 (() => {
   const link = `https://www.themealdb.com/api/json/v1/1/categories.php`;
   spinnerContainer.style.display = "block";
+
+  document.querySelector("#cart-items .modal-body").innerHTML = "";
 
   fetchData(link, (data) => {
     const allItems = data.categories;
