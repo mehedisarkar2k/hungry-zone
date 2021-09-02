@@ -45,16 +45,16 @@ const seeFoodDetails = (idMeal) => {
 };
 
 const showError = (message, container) => {
+  spinnerContainer.style.display = "none";
   container.style.display = "block";
-  container.className = "bg-warning p-2 w-50 mx-auto";
+  container.className = "alert alert-danger p-2 w-50 mx-auto";
   container.querySelector("p").innerHTML = message;
-  container.querySelector("p").classList.add("text-danger");
 };
 
 const cardFooter = (data, type) => {
   if (type == "meal" || type == "category") {
     return `
-  <div class="d-flex justify-content-between">
+  <div class="d-flex flex-column flex-md-row justify-content-between">
     <button  type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#food-details" onclick="seeFoodDetails(${data.idMeal})">
       See details
     </button>
@@ -80,7 +80,7 @@ const seeFoodCatagories = (strCategory) => {
 
   fetchData(link, (data) => {
     const allItems = data.meals;
-    spinnerContainer.style.display = "none";
+
     makeCard(mealContainer, allItems, "category");
   });
 };
@@ -103,6 +103,8 @@ const makeCard = (target, data, type) => {
 
     target.innerHTML += createFoodItem(eachItem, type);
   });
+  messageContainer.style.display = "none";
+  spinnerContainer.style.display = "none";
 };
 
 const createFoodItem = (data, type) => {
@@ -124,17 +126,15 @@ const createFoodItem = (data, type) => {
 // search search handler
 document.getElementById("search-btn").addEventListener("click", () => {
   const mealContainer = document.getElementById("meal-container");
-  const searchData = document.getElementById("search-field").value;
+  const searchData = document.getElementById("search-field").value.trim();
   const spinnerContainer = document.getElementById("spinner-container");
   let link = "";
 
   messageContainer.style.display = "none";
-
+  spinnerContainer.style.display = "block";
   mealContainer.innerHTML = "";
 
   if (searchData) {
-    spinnerContainer.style.display = "block";
-
     if (searchData.length > 1) {
       link = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchData}`;
     } else {
@@ -143,11 +143,8 @@ document.getElementById("search-btn").addEventListener("click", () => {
 
     fetchData(link, (data) => {
       const allItems = data.meals;
-      spinnerContainer.style.display = "none";
 
       if (allItems != null) {
-        messageContainer.style.display = "none";
-
         makeCard(mealContainer, allItems, "meal");
       } else {
         showError(
@@ -162,7 +159,6 @@ document.getElementById("search-btn").addEventListener("click", () => {
 });
 
 // initial food items by category
-
 (() => {
   const link = `https://www.themealdb.com/api/json/v1/1/categories.php`;
   spinnerContainer.style.display = "block";
@@ -170,12 +166,11 @@ document.getElementById("search-btn").addEventListener("click", () => {
   fetchData(link, (data) => {
     const allItems = data.categories;
 
-    spinnerContainer.style.display = "none";
-
     if (allItems != null) {
-      messageContainer.style.display = "none";
-
       makeCard(mealContainer, allItems, "allCategory");
+
+      spinnerContainer.style.display = "none";
+      messageContainer.style.display = "none";
     } else {
       showError(`Something went wrong...!`, messageContainer);
     }
