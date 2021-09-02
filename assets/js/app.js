@@ -12,10 +12,9 @@ const fetchData = (link, callback) => {
 
 const addToCart = (foodID) => {
   const link = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${foodID}`;
+  document.getElementById("cart-add-info").style.display = "block";
 
   fetchData(link, (data) => {
-    document.getElementById("cart-add-info").style.display = "block";
-
     const { strMealThumb, strMeal } = data.meals[0];
     const cart = document.getElementById("cart-items");
     let isFound = false;
@@ -62,7 +61,7 @@ const addToCart = (foodID) => {
 
   setTimeout(() => {
     document.getElementById("cart-add-info").style.display = "none";
-  }, 1000);
+  }, 2000);
 };
 
 const seeFoodDetails = (idMeal) => {
